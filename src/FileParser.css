@@ -1,0 +1,9 @@
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.mainContainer > * {
+  text-align: start;
+  margin: 10px;
+}
