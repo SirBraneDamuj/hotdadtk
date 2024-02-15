@@ -16,12 +16,54 @@ export type ActionConfig = {
 
 export type BaseAction = {
   id: string;
-  name: string;
   group: string;
+  enabled: boolean;
+};
+
+/*
+        {
+          "id": "3d7cacb4-2fcb-464e-ab02-4c77c11e6e00",
+          "weight": 0.0,
+          "name": "it's windy",
+          "random": false,
+          "index": 89
+        },
+        */
+export type SubActionGroup = {
+  id: string;
+  index: number;
+  name: string;
 };
 
 export type Action = BaseAction & {
   actions: SubAction[];
+  name: string;
+  actionGroups: SubActionGroup[];
 };
 
-export type SubAction = BaseAction;
+export type SubAction = BaseAction & {
+  index: number;
+  type: 30 | 1002 | 4 | 1;
+};
+
+export type MediaVisibilitySubAction = SubAction & {
+  state: 0 | 1;
+  type: 30;
+  sceneName: string;
+  sourceName: string;
+};
+
+export type DelaySubAction = SubAction & {
+  value: number;
+  type: 1002;
+};
+
+export type RunActionSubAction = SubAction & {
+  actionId: string;
+  type: 4;
+};
+
+export type PlaySoundSubAction = SubAction & {
+  soundFile: string;
+  type: 1;
+};

@@ -10,11 +10,16 @@
 }
 
 .actionRow {
-  border: 1px grey solid;
+  border: 3px grey solid;
   margin: 5px;
   padding: 5px;
   flex-grow: 1;
   flex-basis: 30%;
+  cursor: pointer;
+}
+
+.actionRow:hover {
+  border: 3px #fafafa solid;
 }
 
 .groupHeader {
