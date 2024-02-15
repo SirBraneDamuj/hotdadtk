@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useState } from "react";
 import FileDisplay from "./FileDisplay/FileDisplay";
-import "./FileParser.css";
+import styles from "./FileLoader.module.css";
 import ActionConfigContext from "./actionConfigContext";
 import type { ActionConfig } from "./types";
 
@@ -25,7 +25,7 @@ function FileLoader() {
   );
   return (
     <>
-      <div className="mainContainer">
+      <div className={styles.mainContainer}>
         <label htmlFor="fileupload">Upload file</label>
         <input name="fileupload" type="file" onChange={onFileChange} />
         <textarea

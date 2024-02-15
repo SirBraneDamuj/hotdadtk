@@ -1,0 +1,12 @@
+.subActionGroup {
+  border: 1px white solid;
+  padding: 10px;
+}
+
+.subActionGroup > * {
+  margin-bottom: 5px;
+}
+
+.header {
+  font-size: 32px;
+}

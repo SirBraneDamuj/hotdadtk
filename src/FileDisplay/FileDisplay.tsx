@@ -3,7 +3,7 @@ import ActionDetails from "../ActionDetails/ActionDetails";
 import ActionConfigContext from "../actionConfigContext";
 import type { Action } from "../types";
 import { groupBy } from "../util";
-import "./FileDisplay.css";
+import styles from "./FileDisplay.module.css";
 
 type ActionRowProps = {
   action: Action;
@@ -12,7 +12,7 @@ type ActionRowProps = {
 
 function ActionRow({ action, onActionClick }: ActionRowProps) {
   return (
-    <div className="actionRow" onClick={() => onActionClick(action.id)}>
+    <div className={styles.actionRow} onClick={() => onActionClick(action.id)}>
       <div>Name: {action.name}</div>
       <div>ID: {action.id}</div>
     </div>
@@ -30,9 +30,9 @@ function ActionGroup({ groupName, actions, onActionClick }: ActionGroupProps) {
     <ActionRow key={action.id} action={action} onActionClick={onActionClick} />
   ));
   return (
-    <div className="actionGroup">
-      <div className="groupHeader">Group Name: {groupName}</div>
-      <div className="actionGroupActionsList">{actionRows}</div>
+    <div className={styles.actionGroup}>
+      <div className={styles.groupHeader}>Group Name: {groupName}</div>
+      <div className={styles.actionGroupActionsList}>{actionRows}</div>
     </div>
   );
 }
