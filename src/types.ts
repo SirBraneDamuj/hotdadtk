@@ -1,5 +1,12 @@
+export type Queue = {
+  id: string;
+  name: string;
+  blocking: boolean;
+};
+
 export type ActionConfig = {
   actions: Action[];
+  queues: Queue[];
 };
 
 /*
@@ -16,7 +23,7 @@ export type ActionConfig = {
 
 export type BaseAction = {
   id: string;
-  group: string;
+  group: string | null;
   enabled: boolean;
 };
 
@@ -35,15 +42,41 @@ export type SubActionGroup = {
   name: string;
 };
 
+/*
+        {
+          "min": -1,
+          "max": 1,
+          "id": "6c6f1d10-9dda-41a9-8fec-3ff61cc340d5",
+          "type": 102,
+          "enabled": true,
+          "alwaysRun": false
+        }
+*/
+export type Trigger = {
+  id: string;
+  min: number;
+  max: number;
+  type: number;
+  enabled: boolean;
+  alwaysRun: boolean;
+};
+
 export type Action = BaseAction & {
   actions: SubAction[];
   name: string;
   actionGroups: SubActionGroup[];
+  collapsedGroups: string[];
+  randomAction: boolean;
+  triggers: Trigger[] | null;
+  queue: string | null;
+  excludeFromHistory: boolean;
+  concurrent: boolean;
 };
 
 export type SubAction = BaseAction & {
   index: number;
   type: 30 | 1002 | 4 | 1;
+  weight: number;
 };
 
 export type MediaVisibilitySubAction = SubAction & {
@@ -51,16 +84,20 @@ export type MediaVisibilitySubAction = SubAction & {
   type: 30;
   sceneName: string;
   sourceName: string;
+  connectionId: string;
 };
 
 export type DelaySubAction = SubAction & {
   value: number;
   type: 1002;
+  maxValue: number;
+  random: boolean;
 };
 
 export type RunActionSubAction = SubAction & {
   actionId: string;
   type: 4;
+  runImmediately: boolean;
 };
 
 export type PlaySoundSubAction = SubAction & {

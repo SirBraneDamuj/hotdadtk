@@ -1,5 +1,7 @@
 import { useCallback, useContext, useMemo, useState } from "react";
+import Modal from "react-modal";
 import ActionDetails from "../ActionDetails/ActionDetails";
+import CreateActionForm from "../CreateActionForm/CreateActionForm";
 import ActionConfigContext from "../actionConfigContext";
 import type { Action } from "../types";
 import { groupBy } from "../util";
@@ -70,4 +72,37 @@ function FileDisplay() {
   }
 }
 
-export default FileDisplay;
+function ExportButton() {
+  const { actionConfig } = useContext(ActionConfigContext);
+  const saveFile = useCallback(() => {
+    const aFileParts = [JSON.stringify(actionConfig)];
+    const oMyBlob = new Blob(aFileParts, { type: "application/json" }); // the blob
+    window.open(URL.createObjectURL(oMyBlob), "_blank");
+  }, [actionConfig]);
+
+  return <button onClick={saveFile}>Export</button>;
+}
+
+function HomepageLayout() {
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const createNewActionClick = useCallback(() => {
+    setShowCreateModal(true);
+  }, [setShowCreateModal]);
+  const onCloseForm = useCallback(() => {
+    setShowCreateModal(false);
+  }, [setShowCreateModal]);
+  return (
+    <div>
+      <div>
+        <button onClick={createNewActionClick}>Create New Action</button>
+        <ExportButton />
+      </div>
+      <FileDisplay />
+      <Modal isOpen={showCreateModal} onRequestClose={onCloseForm}>
+        <CreateActionForm onCloseForm={onCloseForm} />
+      </Modal>
+    </div>
+  );
+}
+
+export default HomepageLayout;

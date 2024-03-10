@@ -1,16 +1,17 @@
 import { useContext, useMemo } from "react";
 import ActionConfigContext from "../actionConfigContext";
-import type { SubAction } from "../types";
+import type { Action } from "../types";
 import { groupBy } from "../util";
 import SubActionGroup from "./SubActionGroup";
 
 type SubActionListProps = {
-  subActions: SubAction[];
+  action: Action;
 };
 
 const NO_GROUP = "NO GROUP";
 
-function SubActionList({ subActions }: SubActionListProps) {
+function SubActionList({ action }: SubActionListProps) {
+  const { actions: subActions } = action;
   const subActionGroups = useMemo(() => {
     return groupBy(subActions, (subAction) => subAction.group || NO_GROUP);
   }, [subActions]);
@@ -18,6 +19,7 @@ function SubActionList({ subActions }: SubActionListProps) {
     <SubActionGroup
       key={groupName}
       groupName={groupName}
+      action={action}
       subActions={subActionGroups[groupName]}
     />
   ));
@@ -39,6 +41,7 @@ function ActionDetails({ actionId, onBackClick }: ActionDetailsProps) {
   if (!action) {
     return <div>Action Not Found :(</div>;
   }
+  console.log(action);
 
   return (
     <div>
@@ -46,7 +49,8 @@ function ActionDetails({ actionId, onBackClick }: ActionDetailsProps) {
       <div>Action Name: {action.name}</div>
       <div>Action ID: {action.id}</div>
       <div>Sub Actions: {action.actions.length}</div>
-      <SubActionList subActions={action.actions} />
+      <div>Random Action?: {action.randomAction ? "✅" : "❌"}</div>
+      <SubActionList action={action} />
     </div>
   );
 }

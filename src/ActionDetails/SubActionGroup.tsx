@@ -1,5 +1,7 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
+import Modal from "react-modal";
 import {
+  Action,
   DelaySubAction,
   MediaVisibilitySubAction,
   PlaySoundSubAction,
@@ -63,11 +65,23 @@ function SubActionItem({ subAction }: SubActionItemProps) {
 }
 
 type SubActionGroupProps = {
+  action: Action;
   groupName: string;
   subActions: SubAction[];
 };
 
-function SubActionGroup({ groupName, subActions }: SubActionGroupProps) {
+function SubActionGroup({
+  action,
+  groupName,
+  subActions,
+}: SubActionGroupProps) {
+  const [showExtractModal, setShowExtractModal] = useState<boolean>(false);
+  const openModal = useCallback(() => {
+    setShowExtractModal(true);
+  }, [setShowExtractModal]);
+  const closeModal = useCallback(() => {
+    setShowExtractModal(false);
+  }, [setShowExtractModal]);
   const sortedSubActions = useMemo(() => {
     return subActions.sort((a, b) => {
       return a.index - b.index;
@@ -80,7 +94,9 @@ function SubActionGroup({ groupName, subActions }: SubActionGroupProps) {
     <div className={styles.subActionGroup}>
       <div className={styles.header}>Group Name: {groupName}</div>
       <div>
-        <button className={styles.actionButton}>Extract To Action</button>
+        <button className={styles.actionButton} onClick={openModal}>
+          Extract To Action
+        </button>
       </div>
       <table>
         <thead>
@@ -92,6 +108,11 @@ function SubActionGroup({ groupName, subActions }: SubActionGroupProps) {
         </thead>
         <tbody>{subActionRows}</tbody>
       </table>
+      <Modal isOpen={showExtractModal}>
+        <h2>Extract subaction</h2>
+        <span>{action.id}</span>
+        <button onClick={closeModal}>Close</button>
+      </Modal>
     </div>
   );
 }
