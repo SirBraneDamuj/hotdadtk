@@ -48,7 +48,7 @@ function FileDisplay() {
   }, [setDisplayedActionId]);
   const groupedActions = useMemo(() => {
     if (!actionConfig) return {};
-    return groupBy(actionConfig.actions, (action) => action.group);
+    return groupBy(actionConfig.actions, (action) => action.group ?? "N/A");
   }, [actionConfig]);
   if (actionConfig) {
     if (!displayedActionId) {
