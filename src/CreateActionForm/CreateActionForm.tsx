@@ -16,7 +16,8 @@ function CreateActionForm({ onCloseForm }: CreateActionFormProps) {
   const { register, handleSubmit } = useForm();
   const { actionConfig, setActionConfig } = useContext(ActionConfigContext);
   const actionGroups = useMemo(
-    () => findAllActionGroups(actionConfig ?? { actions: [], queues: [] }),
+    () =>
+      findAllActionGroups(actionConfig ?? { actions: [], queues: [] }).sort(),
     [actionConfig]
   );
   const actionGroupOptions = actionGroups.map((actionGroup) => (
@@ -37,11 +38,13 @@ function CreateActionForm({ onCloseForm }: CreateActionFormProps) {
     </option>
   ));
   const queueOptions =
-    actionConfig?.queues?.map(({ name, id }) => (
-      <option value={id} key={id}>
-        {name}
-      </option>
-    )) ?? [];
+    actionConfig?.queues
+      ?.sort(({ name: nameA }, { name: nameB }) => (nameA < nameB ? -1 : 1))
+      .map(({ name, id }) => (
+        <option value={id} key={id}>
+          {name}
+        </option>
+      )) ?? [];
   const onSubmit = useCallback(
     (data: FieldValues) => {
       if (!actionConfig) {
