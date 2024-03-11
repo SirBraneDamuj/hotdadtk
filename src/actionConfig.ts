@@ -113,7 +113,7 @@ export function addNewClipToRandomGroup(
     randomAction: false,
     concurrent: false,
     actions: [enableAction, delayAction, hideAction],
-    triggers: null,
+    triggers: [],
     actionGroups: [],
     collapsedGroups: [],
   };
