@@ -173,7 +173,7 @@ export function extractSubActionGroupToNewAction(
 ) {
   const newSubActions = subActions.map((subAction) => ({
     ...subAction,
-    group: undefined,
+    group: null,
   }));
   const newAction = {
     id: uuidv4(),

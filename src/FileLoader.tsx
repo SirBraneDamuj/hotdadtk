@@ -5,7 +5,10 @@ import ActionConfigContext from "./actionConfigContext";
 import type { ActionConfig } from "./types";
 
 function FileLoader() {
-  const [actionConfig, setActionConfig] = useState<ActionConfig | null>(null);
+  const [actionConfig, setActionConfig] = useState<ActionConfig>({
+    actions: [],
+    queues: [],
+  });
   const onFileChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target?.files?.[0];
