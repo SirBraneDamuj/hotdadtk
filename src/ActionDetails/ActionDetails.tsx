@@ -1,19 +1,17 @@
 import { useContext, useMemo } from "react";
+import { groupSubActionsByGroup } from "../actionConfig";
 import ActionConfigContext from "../actionConfigContext";
 import type { Action } from "../types";
-import { groupBy } from "../util";
 import SubActionGroup from "./SubActionGroup";
 
 type SubActionListProps = {
   action: Action;
 };
 
-const NO_GROUP = "NO GROUP";
-
 function SubActionList({ action }: SubActionListProps) {
   const { actions: subActions } = action;
   const subActionGroups = useMemo(() => {
-    return groupBy(subActions, (subAction) => subAction.group || NO_GROUP);
+    return groupSubActionsByGroup(subActions);
   }, [subActions]);
   const subActionGroupItems = Object.keys(subActionGroups).map((groupName) => (
     <SubActionGroup

@@ -6,6 +6,7 @@ import {
   findAllRandomBitTriggeredActions,
 } from "../actionConfig";
 import ActionConfigContext from "../actionConfigContext";
+import { queueOptions } from "../formUtils";
 import styles from "./CreateActionForm.module.css";
 
 type CreateActionFormProps = {
@@ -16,8 +17,7 @@ function CreateActionForm({ onCloseForm }: CreateActionFormProps) {
   const { register, handleSubmit } = useForm();
   const { actionConfig, setActionConfig } = useContext(ActionConfigContext);
   const actionGroups = useMemo(
-    () =>
-      findAllActionGroups(actionConfig ?? { actions: [], queues: [] }).sort(),
+    () => findAllActionGroups(actionConfig).sort(),
     [actionConfig]
   );
   const actionGroupOptions = actionGroups.map((actionGroup) => (
@@ -26,10 +26,7 @@ function CreateActionForm({ onCloseForm }: CreateActionFormProps) {
     </option>
   ));
   const randomGroups = useMemo(
-    () =>
-      findAllRandomBitTriggeredActions(
-        actionConfig ?? { actions: [], queues: [] }
-      ),
+    () => findAllRandomBitTriggeredActions(actionConfig),
     [actionConfig]
   );
   const randomGroupOptions = randomGroups.map(({ action, bitsCost }) => (
@@ -37,14 +34,6 @@ function CreateActionForm({ onCloseForm }: CreateActionFormProps) {
       {action.name} / {bitsCost} bits
     </option>
   ));
-  const queueOptions =
-    actionConfig?.queues
-      ?.sort(({ name: nameA }, { name: nameB }) => (nameA < nameB ? -1 : 1))
-      .map(({ name, id }) => (
-        <option value={id} key={id}>
-          {name}
-        </option>
-      )) ?? [];
   const onSubmit = useCallback(
     (data: FieldValues) => {
       if (!actionConfig) {
@@ -102,7 +91,7 @@ function CreateActionForm({ onCloseForm }: CreateActionFormProps) {
             <label htmlFor="queueId">Queue:</label>
             <select defaultValue={"N/A"} {...register("queueId")}>
               <option value={"N/A"}>N/A</option>
-              {queueOptions}
+              {queueOptions(actionConfig)}
             </select>
           </div>
           <div>

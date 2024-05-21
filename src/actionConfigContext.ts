@@ -2,12 +2,17 @@ import { createContext } from "react";
 import { ActionConfig } from "./types";
 
 export type ActionConfigContextType = {
-  actionConfig: ActionConfig | null;
+  actionConfig: ActionConfig;
   setActionConfig: (newActionConfig: ActionConfig) => void;
 };
 
+const defaultActionConfig: ActionConfig = {
+  actions: [],
+  queues: [],
+};
+
 const ActionConfigContext = createContext<ActionConfigContextType>({
-  actionConfig: null,
+  actionConfig: defaultActionConfig,
   setActionConfig: () => {},
 });
 

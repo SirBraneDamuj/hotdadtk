@@ -7,6 +7,7 @@ import {
   RunActionSubAction,
   SubAction,
 } from "./types";
+import { groupBy } from "./util";
 
 export function findAllActionGroups(actionConfig: ActionConfig): string[] {
   const { actions } = actionConfig;
@@ -46,6 +47,14 @@ function nextSubActionIndex(action: Action): number {
     }
   }
   return lastSubAction?.index ?? 0;
+}
+
+export const NO_GROUP = "NO GROUP";
+
+export function groupSubActionsByGroup(
+  subActions: SubAction[]
+): Record<string, SubAction[]> {
+  return groupBy(subActions, (subAction) => subAction.group || NO_GROUP);
 }
 
 export type NewClip = {
@@ -143,6 +152,72 @@ export function addNewClipToRandomGroup(
     actions: [...randomGroupAction.actions, newSubAction],
   };
   newActionsList.push(newAction, newRandomGroupAction);
+  return {
+    ...actionConfig,
+    actions: newActionsList,
+  };
+}
+
+export type SubActionExtractionParams = {
+  subActions: SubAction[];
+  actionName: string;
+  groupName: string;
+  queueId: string;
+};
+
+export function extractSubActionGroupToNewAction(
+  actionConfig: ActionConfig,
+  actionId: string,
+  oldGroupName: string,
+  { subActions, actionName, groupName, queueId }: SubActionExtractionParams
+) {
+  const newSubActions = subActions.map((subAction) => ({
+    ...subAction,
+    group: undefined,
+  }));
+  const newAction = {
+    id: uuidv4(),
+    name: actionName,
+    queue: queueId ?? null,
+    group: groupName ?? null,
+    enabled: true,
+    excludeFromHistory: false,
+    randomAction: false,
+    concurrent: false,
+    actions: newSubActions,
+    triggers: [],
+    actionGroups: [],
+    collapsedGroups: [],
+  };
+  const oldAction = actionConfig.actions.find(({ id }) => id === actionId);
+  if (!oldAction) {
+    throw Error(
+      "Trying to extract a sub action but... what the hell is goin' on?!"
+    );
+  }
+  const subActionIds = subActions.reduce((ids, { id }) => {
+    return ids.add(id);
+  }, new Set<string>());
+  const { id: oldGroupId } = oldAction.actionGroups.find(
+    ({ name }) => name === oldGroupName
+  )!;
+  const newActionGroups = oldAction.actionGroups.filter(
+    ({ id }) => id !== oldGroupId
+  );
+  const newCollapsedActionGroups = oldAction.collapsedGroups.filter(
+    (s) => s !== oldGroupId
+  );
+  const oldActionMinusSubActions = {
+    ...oldAction,
+    actions: oldAction.actions.filter(({ id }) => !subActionIds.has(id)),
+    actionGroups: newActionGroups,
+    collapsedGroups: newCollapsedActionGroups,
+  };
+  const newActionsList = actionConfig.actions.filter(
+    ({ id }) => id !== actionId
+  );
+  newActionsList.push(oldActionMinusSubActions);
+  newActionsList.push(newAction);
   return {
     ...actionConfig,
     actions: newActionsList,
