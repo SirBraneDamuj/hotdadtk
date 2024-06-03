@@ -42,11 +42,17 @@ export function findAllRandomBitTriggeredActions(
 function nextSubActionIndex(action: Action): number {
   let lastSubAction: SubAction | null = null;
   for (const subAction of action.actions) {
-    if (lastSubAction && subAction.index > lastSubAction.index) {
+    if (!lastSubAction) {
+      lastSubAction = subAction;
+    } else if (subAction.index > lastSubAction.index) {
       lastSubAction = subAction;
     }
   }
-  return lastSubAction?.index ?? 0;
+  if (lastSubAction) {
+    return lastSubAction.index + 1;
+  } else {
+    return 0;
+  }
 }
 
 export const NO_GROUP = "NO GROUP";
@@ -207,17 +213,31 @@ export function extractSubActionGroupToNewAction(
   const newCollapsedActionGroups = oldAction.collapsedGroups.filter(
     (s) => s !== oldGroupId
   );
+  const oldActionSubActions = oldAction.actions.filter(
+    ({ id }) => !subActionIds.has(id)
+  );
+  const newSubAction: RunActionSubAction = {
+    actionId: newAction.id,
+    runImmediately: true,
+    id: uuidv4(),
+    weight: 0.0,
+    type: 4,
+    group: null,
+    enabled: true,
+    index: nextSubActionIndex(oldAction),
+  };
+  oldActionSubActions.push(newSubAction);
   const oldActionMinusSubActions = {
     ...oldAction,
-    actions: oldAction.actions.filter(({ id }) => !subActionIds.has(id)),
+    actions: oldActionSubActions,
     actionGroups: newActionGroups,
     collapsedGroups: newCollapsedActionGroups,
   };
   const newActionsList = actionConfig.actions.filter(
     ({ id }) => id !== actionId
   );
-  newActionsList.push(oldActionMinusSubActions);
   newActionsList.push(newAction);
+  newActionsList.push(oldActionMinusSubActions);
   return {
     ...actionConfig,
     actions: newActionsList,

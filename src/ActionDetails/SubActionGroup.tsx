@@ -19,6 +19,7 @@ function SubActionGroup({
   const [showExtractModal, setShowExtractModal] = useState<boolean>(false);
   const openModal = useCallback(() => {
     setShowExtractModal(true);
+    window.scrollTo(0, 0);
   }, [setShowExtractModal]);
   const closeModal = useCallback(() => {
     setShowExtractModal(false);
