@@ -184,8 +184,8 @@ export function extractSubActionGroupToNewAction(
   const newAction = {
     id: uuidv4(),
     name: actionName,
-    queue: queueId ?? null,
-    group: groupName ?? null,
+    queue: queueId === "N/A" ? null : queueId,
+    group: groupName === "N/A" ? "" : groupName,
     enabled: true,
     excludeFromHistory: false,
     randomAction: false,
